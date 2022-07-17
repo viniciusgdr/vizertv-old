@@ -1,0 +1,25 @@
+{
+  "name": "@viniciusgdr/vizertv",
+  "version": "1.0.0",
+  "description": "Vizer TV Search and Players",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viniciusgdr/vizertv.git"
+  },
+  "keywords": [
+    "vizer",
+    "player",
+    "search",
+    "vizertv"
+  ],
+  "author": "viniciusgdr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/viniciusgdr/vizertv/issues"
+  },
+  "homepage": "https://github.com/viniciusgdr/vizertv#readme"
+}
