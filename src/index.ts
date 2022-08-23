@@ -114,14 +114,16 @@ export class Vizer {
                 return {
                     isLanguageSelected: true,
                     warezcdn: 'https://embed.warezcdn.net/filme/' + imdbTT,
-                    players: player
+                    players: player,
+                    id: Number(result.id)
                 }
             } else {
                 let player = await this.getEmbed({ id: list[0].id })
                 return {
                     isLanguageSelected: false,
                     warezcdn: 'https://embed.warezcdn.net/filme/' + imdbTT,
-                    players: player
+                    players: player,
+                    id: Number(list[0].id)
                 }
             }
         }
@@ -275,5 +277,6 @@ export namespace Vizer {
         isLanguageSelected: boolean;
         warezcdn: string;
         players: string[];
+        id: number;
     }
 }
