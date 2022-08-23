@@ -2,7 +2,7 @@
   "name": "@viniciusgdr/vizertv",
   "version": "1.0.0",
   "description": "Vizer TV Search and Players",
-  "main": "build/index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "jest",
     "postinstall": "npm run build",
