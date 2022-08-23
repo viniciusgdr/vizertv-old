@@ -147,6 +147,25 @@ export class Vizer {
             }
         })
     }
+    public async getDownload({
+        id,
+        player
+    }: {
+        id: number,
+        player: string
+    }): Promise<string> {
+        let { body } = await got.post({
+            url: 'https://vizer.tv/includes/ajax/publicFunctions.php',
+            form: {
+                downloadVideo: id,
+                player
+            },
+            headers: {
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+            }
+        })
+        return JSON.parse(body)?.url
+    }
     private async getEmbed({
         id
     }: Vizer.GetEmbedOptions): Promise<string[]> {
