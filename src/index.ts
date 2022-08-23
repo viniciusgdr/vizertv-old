@@ -57,7 +57,7 @@ export class Vizer {
                         name: $(elem).find('span').text().trim(),
                         picture: 'https://vizer.tv/' + $(elem).find('img').attr('src') || null
                     }
-                }).toArray() as ICasts[] || null,
+                }).toArray() as unknown as ICasts[] || null,
                 description: $('#ms > div:nth-child(1) > section > span').text().trim() || null,
             }
         }
