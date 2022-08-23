@@ -95,9 +95,13 @@ export class Vizer {
     public async getPlayerSerie({
         id,
         imdbTT,
-        language
+        language,
+        temporada,
+        episode
     }: Omit<Vizer.GetPlayerOptions, 'url'> & {
-        id: string
+        id: string,
+        temporada?: number,
+        episode?: number
     }) {
         let { body: html } = await got.post('https://vizer.tv/includes/ajax/publicFunctions.php', {
             form: {
@@ -112,11 +116,13 @@ export class Vizer {
 
         if (language == 'pt') {
             let result = list.find(item => item.lang == '2')
+            console.log(list)
             if (result) {
                 let player = await this.getEmbed({ id: result.id })
+                console.log(player)
                 return {
                     isLanguageSelected: true,
-                    warezcdn: 'https://embed.warezcdn.net/filme/' + imdbTT,
+                    warezcdn: episode && temporada ? `https://embed.warezcdn.net/serie/${imdbTT}/${temporada}/${episode}` : temporada ? `https://embed.warezcdn.net/serie/${imdbTT}/${temporada}` : `https://embed.warezcdn.net/serie/${imdbTT}`,
                     players: player,
                     id: Number(result.id)
                 }
@@ -124,7 +130,7 @@ export class Vizer {
                 let player = await this.getEmbed({ id: list[0].id })
                 return {
                     isLanguageSelected: false,
-                    warezcdn: 'https://embed.warezcdn.net/filme/' + imdbTT,
+                    warezcdn: episode && temporada ? `https://embed.warezcdn.net/serie/${imdbTT}/${temporada}/${episode}` : temporada ? `https://embed.warezcdn.net/serie/${imdbTT}/${temporada}` : `https://embed.warezcdn.net/serie/${imdbTT}`,
                     players: player,
                     id: Number(list[0].id)
                 }
