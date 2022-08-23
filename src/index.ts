@@ -2,6 +2,7 @@ import cheerio from 'cheerio';
 import got from 'got';
 import { getstr } from "./utils/getstr";
 import { ICasts } from "./interfaces/Vizer";
+import { publicFunctionsVizer } from './functions/publicFunctionsVizer';
 
 export class Vizer {
     constructor() { }
@@ -103,13 +104,8 @@ export class Vizer {
         temporada?: number,
         episode?: number
     }) {
-        let { body: html } = await got.post('https://vizer.tv/includes/ajax/publicFunctions.php', {
-            form: {
-                getEpisodeLanguages: id
-            },
-            headers: {
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-            }
+        let html = await publicFunctionsVizer({
+            getEpisodeLanguages: id
         })
         let obj: Vizer.ResultAPI.ObjID = JSON.parse(html)
         let list: Vizer.ResultAPI.List[] = Object.keys(obj.list).map(key => obj.list[key])
@@ -176,14 +172,9 @@ export class Vizer {
     private async getEpisodes({
         id
     }: Vizer.GetEmbedOptions): Promise<Vizer.ResultAPI.ResultEpisodes[]> {
-        let { body: html } = await got.post('https://vizer.tv/includes/ajax/publicFunctions.php', {
-            form: {
-                getEpisodes: id
-            },
-            headers: {
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-            }
-        })
+        let html = await publicFunctionsVizer({
+            getEpisodes: id
+        }) 
         let obj: Vizer.ResultAPI.ObjID = JSON.parse(html)
         let list: Vizer.ResultAPI.ListEpisodes[] = Object.keys(obj.list).map(key => obj.list[key])
         return list.map(item => {
@@ -202,15 +193,9 @@ export class Vizer {
         player: string
     }): Promise<string> {
         if (player.includes('https://')) player = player.split('=')[2]
-        let { body } = await got.post({
-            url: 'https://vizer.tv/includes/ajax/publicFunctions.php',
-            form: {
-                downloadVideo: id,
-                player
-            },
-            headers: {
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-            }
+        let body = await publicFunctionsVizer({
+            downloadVideo: id,
+            player
         })
         let url = 'https://vizer.tv/' + JSON.parse(body)?.url
         try {
@@ -224,14 +209,8 @@ export class Vizer {
     private async getEmbed({
         id
     }: Vizer.GetEmbedOptions): Promise<string[]> {
-        let { body } = await got.post({
-            url: 'https://vizer.tv/includes/ajax/publicFunctions.php',
-            form: {
-                getVideoPlayers: id
-            },
-            headers: {
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-            }
+        let body = await publicFunctionsVizer({
+            getVideoPlayers: id
         })
         let data: Vizer.ResultAPI.EmbedResult = JSON.parse(body)
         let players: string[] = []
