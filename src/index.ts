@@ -116,10 +116,10 @@ export class Vizer {
 
         if (language == 'pt') {
             let result = list.find(item => item.lang == '2')
-            console.log(list)
+            //console.log(list)
             if (result) {
                 let player = await this.getEmbed({ id: result.id })
-                console.log(player)
+                //console.log(player)
                 return {
                     isLanguageSelected: true,
                     warezcdn: episode && temporada ? `https://embed.warezcdn.net/serie/${imdbTT}/${temporada}/${episode}` : temporada ? `https://embed.warezcdn.net/serie/${imdbTT}/${temporada}` : `https://embed.warezcdn.net/serie/${imdbTT}`,
