@@ -156,6 +156,7 @@ export class Vizer {
         id: number,
         player: string
     }): Promise<string> {
+        if (player.includes('https://')) player = player.split('=')[2]
         let { body } = await got.post({
             url: 'https://vizer.tv/includes/ajax/publicFunctions.php',
             form: {
@@ -166,7 +167,14 @@ export class Vizer {
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
             }
         })
-        return JSON.parse(body)?.url
+        let url = 'https://vizer.tv/' + JSON.parse(body)?.url
+        try {
+            let { body: body2 } = await got.get(url)
+            let urlReal = getstr(body2, 'window.location.href="', '"', 0)
+            return urlReal
+        } catch (err) {
+            return url
+        }
     }
     private async getEmbed({
         id
@@ -197,6 +205,19 @@ export class Vizer {
         return players
     }
 };
+(async () => {
+    let vizer = new Vizer()
+    let search = await vizer.search({ query: "Velozes e Furiosos", type: 'movie' })
+    let info = await vizer.getInfo({ url: search[0].url })
+    let player = await vizer.getPlayer({ url: search[0].url, imdbTT: info.imdbTT, language: 'pt' })
+    console.log(player)
+    console.log(player.players[0].split('=')[2])
+    let download = await vizer.getDownload({
+        id: player.id,
+        player: player.players[0].split('=')[2]
+    })
+    console.log(download)
+})();
 export namespace Vizer {
     export interface ListSerieEpisodesResult {
         number: number;
