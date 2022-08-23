@@ -176,23 +176,6 @@ export class Vizer {
         return players
     }
 };
-(async () => {
-    let vizer = new Vizer()
-    let result = await vizer.search({
-        query: 'The Walking Dead',
-        type: 'serie'
-    })
-    console.log(result)
-    let info = await vizer.getInfo({
-        url: result[0].url
-    })
-    console.log(info)
-    let episodes = await vizer.listSerieEpisodes({
-        url: result[0].url
-    })
-    console.log(episodes)
-})();
-
 export namespace Vizer {
     export interface ListSerieEpisodesResult {
         number: number;
