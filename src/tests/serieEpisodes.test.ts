@@ -6,9 +6,6 @@ test('Serie Episodes', async () => {
         query: "The good Doctor",
         type: "serie"
     })
-    let info = await vizer.getInfo({
-        url: search[0].url
-    })
     let episodes = await vizer.listSerieEpisodes({
         url: search[0].url
     })
