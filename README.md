@@ -32,6 +32,29 @@ let vizer = new Vizer()
 let info = await vizer.getInfo({ url: 'url' })
 console.log(info)
 ```
+Conseguir todas as temporadas e episódios
+```ts
+let temporadas = await vizer.listSerieEpisodes({
+   url: search[0].url
+})
+/*
+ {
+    "number": 1,
+    "episodes": [
+      {
+        "id": "43521",
+        "name": "1",
+        "title": "Burnt Food"
+      },
+      {
+        "id": "43522",
+        "name": "2",
+        "title": "Mount Rushmore"
+      },
+      ...
+   ]
+*/
+```
 Conseguir o Player (WarezCDN, etc)
 ```ts
 let player = await vizer.getPlayer({ 
