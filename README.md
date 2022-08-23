@@ -41,3 +41,12 @@ let player = await vizer.getPlayer({
 })
 console.log(player)
 ```
+
+Conseguir Player de Séries e animes
+```ts
+let player = await vizer.getPlayerSerie({
+        id: player[0].episodes[0].id,
+        language: 'pt',
+        imdbTT: info.imdbTT
+})
+```

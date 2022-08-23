@@ -92,6 +92,45 @@ export class Vizer {
         }
         return result
     }
+    public async getPlayerSerie({
+        id,
+        imdbTT,
+        language
+    }: Omit<Vizer.GetPlayerOptions, 'url'> & {
+        id: string
+    }) {
+        let { body: html } = await got.post('https://vizer.tv/includes/ajax/publicFunctions.php', {
+            form: {
+                getEpisodeLanguages: id
+            },
+            headers: {
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+            }
+        })
+        let obj: Vizer.ResultAPI.ObjID = JSON.parse(html)
+        let list: Vizer.ResultAPI.List[] = Object.keys(obj.list).map(key => obj.list[key])
+
+        if (language == 'pt') {
+            let result = list.find(item => item.lang == '2')
+            if (result) {
+                let player = await this.getEmbed({ id: result.id })
+                return {
+                    isLanguageSelected: true,
+                    warezcdn: 'https://embed.warezcdn.net/filme/' + imdbTT,
+                    players: player,
+                    id: Number(result.id)
+                }
+            } else {
+                let player = await this.getEmbed({ id: list[0].id })
+                return {
+                    isLanguageSelected: false,
+                    warezcdn: 'https://embed.warezcdn.net/filme/' + imdbTT,
+                    players: player,
+                    id: Number(list[0].id)
+                }
+            }
+        }
+    }
     public async getPlayer({
         url,
         imdbTT,
