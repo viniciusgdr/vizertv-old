@@ -4,7 +4,10 @@
   "description": "Vizer TV Search and Players",
   "main": "src/index.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "npm run build",
+    "tsc": "./node_modules/typescript/bin/tsc",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -24,6 +27,7 @@
   "homepage": "https://github.com/viniciusgdr/vizertv#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
-    "got": "^11.8.2"
+    "got": "^11.8.2",
+    "typescript": "^4.7.4"
   }
 }
