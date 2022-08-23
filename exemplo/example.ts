@@ -1,3 +1,5 @@
+import { Vizer } from '../src';
+
 (async () => {
     let vizer = new Vizer()
     let search = await vizer.search({ query: "Velozes e Furiosos", type: 'movie' })
