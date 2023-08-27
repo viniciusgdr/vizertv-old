@@ -23,7 +23,7 @@ export class Vizer {
             let url = $(elem).attr('href')
             if (
                 (!quantity || i < quantity) &&
-                (type == 'serie' ? url.includes('serie') ? true : false : type == 'movie' ? url.includes('filme') ? true : false : false)
+                (type == 'serie' ? url.includes('serie') ? true : false : type == 'movie' ? url.includes('filme') ? true : false : true)
             ) results.push({
                 title: $(elem).find('div.infos > span').text().trim(),
                 url: 'https://vizer.tv/' + url,
@@ -276,7 +276,7 @@ export namespace Vizer {
     export interface SearchOptions {
         query: string;
         quantity?: number;
-        type: 'movie' | 'serie';
+        type: 'movie' | 'serie' | 'all';
     }
     export interface SearchResult {
         title: string;
