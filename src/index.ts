@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import cheerio, { load } from 'cheerio';
 import got from 'got';
 import { getstr } from "./utils/getstr";
 import { ICasts } from "./interfaces/Vizer";
@@ -114,7 +114,7 @@ export class Vizer {
             let result = list.find(item => item.lang == '2')
             //console.log(list)
             if (result) {
-                let player = await this.getEmbed({ id: result.id })
+                let player = await this.getEmbed({ id: result.id, data: JSON.parse(result.players) })
                 //console.log(player)
                 return {
                     isLanguageSelected: true,
@@ -123,7 +123,7 @@ export class Vizer {
                     id: Number(result.id)
                 }
             } else {
-                let player = await this.getEmbed({ id: list[0].id })
+                let player = await this.getEmbed({ id: list[0].id, data: JSON.parse(list[0].players) })
                 return {
                     isLanguageSelected: false,
                     warezcdn: episode && temporada ? `https://embed.warezcdn.net/serie/${imdbTT}/${temporada}/${episode}` : temporada ? `https://embed.warezcdn.net/serie/${imdbTT}/${temporada}` : `https://embed.warezcdn.net/serie/${imdbTT}`,
@@ -144,27 +144,32 @@ export class Vizer {
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
             }
         })
-        let string = '{"' + getstr(html, 'videoPlayerBox({"', ');', 0)
-        let obj: Vizer.ResultAPI.ObjID = JSON.parse(string)
-        let list: Vizer.ResultAPI.List[] = Object.keys(obj.list).map(key => obj.list[key])
+        const $ = load(html)
+        const audios = $('.area.audios > div').toArray().map((elem) => {
+            return {
+                playerId: $(elem).attr('data-load-player'),
+                dataPlayers: $(elem).attr('data-players'),
+                dataAudio: $(elem).attr('data-audio')
+            }
+        })
 
         if (language == 'pt') {
-            let result = list.find(item => item.lang == '2')
+            let result = audios.find(item => item.dataAudio == 'dublado')
             if (result) {
-                let player = await this.getEmbed({ id: result.id })
+                let player = await this.getEmbed({ id: result.playerId, data: JSON.parse(result.dataPlayers) })
                 return {
                     isLanguageSelected: true,
                     warezcdn: 'https://embed.warezcdn.net/filme/' + imdbTT,
                     players: player,
-                    id: Number(result.id)
+                    id: Number(result.playerId)
                 }
             } else {
-                let player = await this.getEmbed({ id: list[0].id })
+                let player = await this.getEmbed({ id: audios[0].playerId, data: JSON.parse(audios[0].dataPlayers) })
                 return {
                     isLanguageSelected: false,
                     warezcdn: 'https://embed.warezcdn.net/filme/' + imdbTT,
                     players: player,
-                    id: Number(list[0].id)
+                    id: Number(audios[0].playerId)
                 }
             }
         }
@@ -174,7 +179,7 @@ export class Vizer {
     }: Vizer.GetEmbedOptions): Promise<Vizer.ResultAPI.ResultEpisodes[]> {
         let html = await publicFunctionsVizer({
             getEpisodes: id
-        }) 
+        })
         let obj: Vizer.ResultAPI.ObjID = JSON.parse(html)
         let list: Vizer.ResultAPI.ListEpisodes[] = Object.keys(obj.list).map(key => obj.list[key])
         return list.map(item => {
@@ -207,12 +212,11 @@ export class Vizer {
         }
     }
     private async getEmbed({
-        id
-    }: Vizer.GetEmbedOptions): Promise<string[]> {
-        let body = await publicFunctionsVizer({
-            getVideoPlayers: id
-        })
-        let data: Vizer.ResultAPI.EmbedResult = JSON.parse(body)
+        id,
+        data
+    }: Vizer.GetEmbedOptions & {
+        data: Vizer.ResultAPI.EmbedResult;
+    }): Promise<string[]> {
         let players: string[] = []
         if (data.mixdrop == "3") {
             players.push(`https://vizer.tv/embed/getEmbed.php?id=${id}&sv=mixdrop`)
@@ -255,6 +259,7 @@ export namespace Vizer {
         export interface List {
             id: string;
             lang: string;
+            players: string;
         }
         export interface ListEpisodes extends Omit<List, 'lang'> {
             img: string;
